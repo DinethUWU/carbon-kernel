@@ -270,15 +270,6 @@ public class CarbonSecuredHttpContext extends SecuredComponentEntryHttpContext {
             return true;
         }
 
-        if (!authenticated) {
-            if (requestedURI.endsWith("ajaxprocessor.jsp")) {
-                // Prevent login page appearing
-                return true;
-            } else {
-                return CarbonUILoginUtil.saveOriginalUrl(authenticator, request, response, session,
-                        skipLoginPage, contextPath, indexPageURL, requestedURI);
-            }
-        }
         if (request.getSession().isNew()) {
             if (skipLoginPage) {
                 response.sendRedirect(contextPath + "/carbon/admin/login_action.jsp");
@@ -288,6 +279,17 @@ public class CarbonSecuredHttpContext extends SecuredComponentEntryHttpContext {
             }
             return false;
         }
+
+        if (!authenticated) {
+            if (requestedURI.endsWith("ajaxprocessor.jsp")) {
+                // Prevent login page appearing
+                return true;
+            } else {
+                return CarbonUILoginUtil.saveOriginalUrl(authenticator, request, response, session,
+                        skipLoginPage, contextPath, indexPageURL, requestedURI);
+            }
+        }
+
 
         if (isWebXMLPath(context, requestedURI)) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
